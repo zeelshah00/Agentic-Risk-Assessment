@@ -1,0 +1,21 @@
+# Terraform Variables Configuration - PRODUCTION
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: GCP Project ID
+gcp_project_id = "your-gcp-project-id"
+
+# Optional: Daily token limit (0 = unlimited)
+# For ~$100/day budget: 12M tokens (conservative) to 15M tokens (moderate)
+daily_token_limit = 12000000
+
+# Optional: Environment name
+environment_name = "production"
+
+# Geolocation & Load Balancer Settings (optional)
+# Enable this to get automatic geolocation headers for GDPR compliance
+# Requires custom domain and adds ~$50-70/month cost
+enable_load_balancer = false
+domain_name = ""  # e.g., "app.yourdomain.com"
+
+# Optional: Safe hostnames for STDIO MCP servers
+stdio_safe_hostnames = "*.aws.env.fyi"

@@ -1,0 +1,33 @@
+{
+  "name": "bigid-mcp-server",
+  "version": "1.0.18",
+  "description": "Backend-only BigID MCP server",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "files": [
+    "dist/",
+    "src/",
+    "bigid-filter-spec.yml",
+    "config/",
+    "tsconfig.json"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "axios": "^1.10.0",
+    "dotenv": "^17.2.0",
+    "node-cache": "^5.1.2",
+    "winston": "^3.17.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "typescript": "^5.8.3"
+  }
+}

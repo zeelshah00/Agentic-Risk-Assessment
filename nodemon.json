@@ -1,0 +1,6 @@
+{
+  "watch": ["server.js", "frontend/src/"],
+  "ext": "js,json,jsx,css,ts,tsx",
+  "ignore": ["frontend/dist/", "build/"],
+  "exec": "npm run build-frontend && node server.js"
+}

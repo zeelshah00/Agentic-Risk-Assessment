@@ -1,0 +1,21 @@
+# Terraform Variables Configuration - DEV
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: GCP Project ID
+gcp_project_id = "your-gcp-project-id"
+
+# Optional: Daily token limit (0 = unlimited)
+# For dev, you might want a lower limit than production
+daily_token_limit = 5000000
+
+# Optional: Environment name
+environment_name = "dev"
+
+# Geolocation & Load Balancer Settings (optional)
+# Enable this to get automatic geolocation headers for GDPR compliance
+# Requires custom domain and adds ~$50-70/month cost
+enable_load_balancer = false
+domain_name = ""  # e.g., "app-dev.yourdomain.com"
+
+# Optional: Safe hostnames for STDIO MCP servers
+stdio_safe_hostnames = "*.aws.env.fyi"

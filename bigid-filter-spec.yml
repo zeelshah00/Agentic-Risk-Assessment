@@ -1,0 +1,415 @@
+# BigID Filter Specification
+title: "BigID Filter Specification"
+version: "1.0"
+description: "BigID Filter Query Language specification and examples"
+
+query_language:
+  description: "BigID uses a custom query language for filtering"
+  examples:
+    - "entityType=database"
+    - "tags=PII"
+    - "source=mysql"
+    - "status=active"
+  operators:
+    - "equal"
+    - "notEqual"
+    - "contains"
+    - "notContains"
+    - "greaterThan"
+    - "greaterThanOrEqual"
+    - "lessThan"
+    - "lessThanOrEqual"
+    - "in"
+    - "exact"
+    - "notExact"
+
+query_specification:
+  title: "BigID Query Filter Specification"
+
+  syntax:
+    basic_rules:
+      - "Queries use field names and values with operators"
+      - "String values must be enclosed in double quotes"
+      - "Numeric values can be used directly"
+      - "Boolean values: true/false"
+      - "Date values must use ISO format: yyyy-mm-ddThh:mm:ss.000Z"
+
+    operators:
+      comparison:
+        - "=" (equals)
+        - "!=" (not equals)
+        - ">" (greater than)
+        - ">=" (greater than or equal)
+        - "<" (less than)
+        - "<=" (less than or equal)
+        - "IN" (in list)
+        - "NOT IN" (not in list)
+        - "LIKE" (pattern matching)
+        - "NOT LIKE" (not pattern matching)
+        - "EXISTS" (field exists)
+        - "NOT EXISTS" (field does not exist)
+
+      logical:
+        - "AND" (logical and)
+        - "OR" (logical or)
+        - "NOT" (logical not)
+
+      pattern_matching:
+        - "/pattern/" (regex pattern matching)
+        - "= /pattern/" (exact regex match)
+        - "!= /pattern/" (not regex match)
+
+    escape_rules:
+      - "Use double quotes for string values"
+      - "Escape special characters in regex patterns"
+      - "Use parentheses for complex logical expressions"
+
+  data_type_conversions:
+    to_date:
+      description: "Convert string to date for date comparisons"
+      syntax: "to_date(yyyy-mm-ddThh:mm:ss.000Z)"
+      example: "last_modified > to_date(2023-01-01T00:00:00.000Z)"
+
+    to_number:
+      description: "Convert string to number for numeric comparisons"
+      syntax: "to_number(value)"
+      example: "file_size > to_number(1000000)"
+
+    to_bool:
+      description: "Convert string to boolean for boolean comparisons"
+      syntax: "to_bool(value)"
+      example: "is_encrypted = to_bool(true)"
+
+    past:
+      description: "Get date relative to current time"
+      syntax: "past(time_period)"
+      example: "last_opened < past(\"5y\") OR modified_date < past(\"5y\")"
+
+    elementmatch:
+      description: "Match elements in arrays or objects"
+      syntax: "elementmatch(condition)"
+      example: "columnOrFieldOccurrencesCounter=elementmatch(fieldName=/Email|email/)"
+
+  available_parameters:
+    # Display and Identification
+    - name: "displayName"
+      description: "Human-readable name of the object"
+      type: "string"
+      example: 'displayName = "Customer Database"'
+
+    - name: "uniqueId"
+      description: "Unique identifier for the object"
+      type: "string"
+      example: 'uniqueId = "12345"'
+
+    - name: "entityLocation"
+      description: "Location of the entity in the data source"
+      type: "string"
+      example: 'entityLocation = "/path/to/file"'
+
+    # System and Data Source
+    - name: "system"
+      description: "Data source system name"
+      type: "string"
+      example: 'system IN ("MySQL", "PostgreSQL")'
+
+    - name: "datasource"
+      description: "Data source identifier"
+      type: "string"
+      example: 'datasource = "prod-db-01"'
+
+    # Entity Properties
+    - name: "entityType"
+      description: "Type of entity (file, database, table, etc.)"
+      type: "string"
+      example: 'entityType = "database"'
+
+    - name: "objectType"
+      description: "Specific object type classification"
+      type: "string"
+      example: 'objectType = "table"'
+
+    - name: "detailedObjectType"
+      description: "Detailed object type classification"
+      type: "string"
+      example: 'detailedObjectType = "STRUCTURED_FILE"'
+
+    # Attributes and Annotations
+    - name: "attributes"
+      description: "Object attributes and properties"
+      type: "object"
+      example: 'attributes.owner = "john.doe"'
+
+    - name: "annotations"
+      description: "User-defined annotations"
+      type: "object"
+      example: 'annotations.risk_level = "high"'
+
+    - name: "tags"
+      description: "Tags applied to the object"
+      type: "array"
+      example: 'tags IN ("PII", "Confidential")'
+
+    # Applications and Risk
+    - name: "applications"
+      description: "Applications associated with the object"
+      type: "array"
+      example: 'applications IN ("CRM", "ERP")'
+
+    - name: "riskScore"
+      description: "Risk assessment score"
+      type: "number"
+      example: 'riskScore > 75'
+
+    # File Properties
+    - name: "fileName"
+      description: "Name of the file"
+      type: "string"
+      example: 'fileName = "customer_data.csv"'
+
+    - name: "fileType"
+      description: "File extension or type"
+      type: "string"
+      example: 'fileType IN ("pdf", "docx", "xlsx")'
+
+    - name: "fileSize"
+      description: "Size of the file in bytes"
+      type: "number"
+      example: 'fileSize > 1000000'
+
+    - name: "fileOwner"
+      description: "Owner of the file"
+      type: "string"
+      example: 'fileOwner = "john.doe"'
+
+    - name: "fileCreator"
+      description: "Creator of the file"
+      type: "string"
+      example: 'fileCreator = "jane.smith"'
+
+    # Dates and Timestamps
+    - name: "createdDate"
+      description: "Date when the object was created"
+      type: "date"
+      example: 'createdDate > to_date(2023-01-01T00:00:00.000Z)'
+
+    - name: "modifiedDate"
+      description: "Date when the object was last modified"
+      type: "date"
+      example: 'modifiedDate < to_date(2023-12-31T23:59:59.000Z)'
+
+    - name: "lastAccessedDate"
+      description: "Date when the object was last accessed"
+      type: "date"
+      example: 'lastAccessedDate < past("30d")'
+
+    # Content and Classification
+    - name: "containsPI"
+      description: "Whether the object contains personally identifiable information"
+      type: "boolean"
+      example: 'containsPI = true'
+
+    - name: "classification"
+      description: "Data classification level"
+      type: "string"
+      example: 'classification IN ("Public", "Internal", "Confidential", "Restricted")'
+
+    - name: "sensitivity"
+      description: "Sensitivity level of the data"
+      type: "string"
+      example: 'sensitivity = "High"'
+
+    # Database Specific
+    - name: "schemaName"
+      description: "Database schema name"
+      type: "string"
+      example: 'schemaName = "public"'
+
+    - name: "tableName"
+      description: "Database table name"
+      type: "string"
+      example: 'tableName = "customers"'
+
+    - name: "columnName"
+      description: "Database column name"
+      type: "string"
+      example: 'columnName = "email"'
+
+    - name: "dataType"
+      description: "Database column data type"
+      type: "string"
+      example: 'dataType = "varchar"'
+
+    # Security and Access
+    - name: "accessLevel"
+      description: "Access level required for the object"
+      type: "string"
+      example: 'accessLevel = "ReadOnly"'
+
+    - name: "encryptionStatus"
+      description: "Encryption status of the object"
+      type: "string"
+      example: 'encryptionStatus = "Encrypted"'
+
+    - name: "retentionPolicy"
+      description: "Data retention policy"
+      type: "string"
+      example: 'retentionPolicy = "7 years"'
+
+    # Compliance and Governance
+    - name: "complianceFrameworks"
+      description: "Compliance frameworks applicable to the object"
+      type: "array"
+      example: 'complianceFrameworks IN ("GDPR", "CCPA", "HIPAA")'
+
+    - name: "dataSubject"
+      description: "Data subject category"
+      type: "string"
+      example: 'dataSubject = "Customer"'
+
+    - name: "processingPurpose"
+      description: "Purpose of data processing"
+      type: "string"
+      example: 'processingPurpose = "Marketing"'
+
+    # Quality and Status
+    - name: "dataQualityScore"
+      description: "Data quality assessment score"
+      type: "number"
+      example: 'dataQualityScore > 80'
+
+    - name: "status"
+      description: "Status of the object"
+      type: "string"
+      example: 'status = "Active"'
+
+    - name: "lastScanned"
+      description: "Date when the object was last scanned"
+      type: "date"
+      example: 'lastScanned > to_date(2023-06-01T00:00:00.000Z)'
+
+    # Additional Parameters from Sample Queries
+    - name: "field"
+      description: "Field name for classification and attributes"
+      type: "string"
+      example: 'field = "classifier.Credit Card"'
+
+    - name: "objectName"
+      description: "Name of the object (file, table, etc.)"
+      type: "string"
+      example: 'objectName = /foo*/'
+
+    - name: "contains_pi"
+      description: "Whether the object contains personally identifiable information (alternative to containsPI)"
+      type: "boolean"
+      example: 'contains_pi = "true"'
+
+    - name: "type"
+      description: "Object type (file, mail, APP, rdb, kafka, salesforce, etc.)"
+      type: "string"
+      example: 'type = "file" OR type = "mail"'
+
+    - name: "sizeInBytes"
+      description: "File size in bytes"
+      type: "number"
+      example: 'sizeInBytes >= to_number(77824)'
+
+    - name: "last_opened"
+      description: "Date when the object was last opened"
+      type: "date"
+      example: 'last_opened < past("5y")'
+
+    - name: "modified_date"
+      description: "Date when the object was last modified (alternative to modifiedDate)"
+      type: "date"
+      example: 'modified_date < past("5y")'
+
+    - name: "metadata"
+      description: "Object metadata properties"
+      type: "object"
+      example: 'metadata.created<"2021-01-01"'
+
+    - name: "containerName"
+      description: "Container name for email and storage objects"
+      type: "string"
+      example: 'containerName = user@example.com'
+
+    - name: "optionalProperties"
+      description: "Optional properties for objects"
+      type: "object"
+      example: 'optionalProperties.sentDateTime<"2023-08-26"'
+
+    - name: "additionalProperties"
+      description: "Additional properties for objects"
+      type: "object"
+      example: 'additionalProperties.To=/user1@acme.com|user99@acme.com/'
+
+    - name: "isEncrypted"
+      description: "Whether the object is encrypted"
+      type: "boolean"
+      example: 'isEncrypted=to_bool(true)'
+
+    - name: "errorMessage"
+      description: "Error message from scanning or processing"
+      type: "string"
+      example: 'errorMessage=/is encrypted/'
+
+    - name: "owner"
+      description: "Owner of the object"
+      type: "string"
+      example: 'owner=/Account Unknown/'
+
+    - name: "createdBy"
+      description: "Creator of the object"
+      type: "string"
+      example: 'createdBy=/^$/'
+
+    - name: "scannerType"
+      description: "Type of scanner used"
+      type: "string"
+      example: 'scannerType=jira'
+
+    - name: "scanner_type_group"
+      description: "Scanner type group classification"
+      type: "string"
+      example: 'scanner_type_group IN ("structured")'
+
+    - name: "totalRows"
+      description: "Total number of rows in structured data"
+      type: "number"
+      example: 'totalRows > to_number(2001)'
+
+    - name: "archiveProperties"
+      description: "Archive file properties"
+      type: "object"
+      example: 'archiveProperties.archiveDepth>=to_number(1)'
+
+    - name: "fullyQualifiedName"
+      description: "Fully qualified name of the object"
+      type: "string"
+      example: 'fullyQualifiedName=/\.7z\/|\.arj\/|\.rar\/|\.tar\/|\.tgz\/|\.xz\/|\.zip\//'
+
+    - name: "columnOrFieldOccurrencesCounter"
+      description: "Counter for column or field occurrences"
+      type: "object"
+      example: 'columnOrFieldOccurrencesCounter=elementmatch(fieldName=/Email|email/)'
+
+    - name: "attribute_details"
+      description: "Detailed attribute information"
+      type: "object"
+      example: 'attribute_details=elementmatch(name IN ("classifier.Credit Card") AND count>=to_number(25))'
+
+    - name: "id_source"
+      description: "Identity source for correlation"
+      type: "string"
+      example: 'id_source IN ("CS1", "CS2")'
+
+    - name: "attribute"
+      description: "Attribute name or value"
+      type: "string"
+      example: 'attribute="ATTR1"'
+
+    - name: "catalog_tag"
+      description: "Catalog tag properties"
+      type: "object"
+      example: 'catalog_tag.system.remediation.Remediation = "False Positive"'
