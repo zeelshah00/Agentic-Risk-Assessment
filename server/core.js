@@ -1,3 +1,4 @@
+// Core agentic loop: sends a user prompt to the AI model and drives tool-call / response turns until the model returns plain text.
 const path = require('path');
 const { discoverTools, callMcpTool } = require('./mcp');
 const { removeExamples, removeInvalidEnums, getGenerativeModel, normalizeResponse, normalizeTextResponse } = require('./utils');

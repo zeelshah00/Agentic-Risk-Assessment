@@ -1,3 +1,4 @@
+// Web app entry point: serves the React frontend and mounts the API router.
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -14,8 +15,6 @@ const PORT = process.env.PORT || 3000;
 app.use('/ui', express.static(path.join(__dirname, 'build')));
 
 app.use(routes);
-
-// OAuth callback handling is now done in /api/mcp/oauth/callback route
 
 app.get('/ui/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));

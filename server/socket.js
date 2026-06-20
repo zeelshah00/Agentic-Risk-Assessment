@@ -1,3 +1,4 @@
+// WebSocket handler: streams AI responses back to the browser in real time and enforces per-tenant token limits before each turn.
 const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');

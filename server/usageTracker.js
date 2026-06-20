@@ -1,3 +1,4 @@
+// Per-tenant token usage tracking backed by Firestore. Tenants are keyed by hashed BigID URL so one deployment can serve many instances.
 const crypto = require('crypto');
 const { getUsageForEnvironment, incrementUsageForEnvironment } = require('./firestoreService');
 

@@ -1,3 +1,4 @@
+// MCP server entry point: registers 28+ BigID tools and starts a stdio transport for use with any MCP-compatible AI client.
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { ListToolsRequestSchema, CallToolRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema, ListPromptsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
@@ -104,10 +105,6 @@ class BigIDMCPServer {
     this.aciClient = new ACIClient(this.auth, config.bigid.domain);
     this.locationClient = new LocationClient(this.auth, config.bigid.domain);
     this.lineageClient = new LineageClient(this.auth, config.bigid.domain);
-
-
-    
-    // Initialize advanced features
 
     this.cacheManager = new CacheManager();
     this.catalogTools = new CatalogTools(this.catalogClient, this.cacheManager);
